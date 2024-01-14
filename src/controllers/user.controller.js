@@ -12,7 +12,7 @@ const generateAccessAndRefereshTokens = async(userId) =>{
         const refreshToken = user.generateRefreshToken()
 
         user.refreshToken = refreshToken
-        await user.save({ validateBeforeSave: false })
+        await user.save({ validateBeforeSave: false })//validateBeforeSave does not require user validation again
 
         return {accessToken, refreshToken}
 
@@ -98,4 +98,76 @@ const registerUser = asyncHandler( async (req, res) => {
 
 } )
 
-export {registerUser}
+const loginUser= asyncHandler(async (req,res) => {
+    //req body->data
+    //username or email
+    // find the user
+    //password check
+    //access and refresh token generation
+    //send cookie
+
+    const{email,username,password}= req.body
+
+    if(!username || !email){
+        throw new ApiError(400,"Username or email is required")
+
+    }
+
+   const user= await User.findOne({
+        $or:[{username},{email}]
+    })
+    if(!user){
+        throw new ApiError(404,"User does not exist")
+    }
+    const isPasswordValid= await user.isPasswordCorrect(password)
+    if(!isPasswordValid){
+        throw new ApiError(401,"Invalid credentials")
+    }
+    const {accessToken,refreshToken}=await generateAccessAndRefereshTokens(user._id);
+
+    const loggedInUser= await User.findById(user._id)
+    select("-password -refreshToken")
+
+    const options={
+        httpOnly: true,
+        secure:true
+        //above thing ensures that cookie is modifiable through server only 
+    }
+
+    return res.status(200)
+    .cookie("accessToken",accessToken,options)
+    .cookie("refreshToken",refreshToken,options)
+    .json(
+        new ApiResponse(200,{
+            user:loggedInUser,accessToken,refreshToken
+        }, "User logged in Successfully")
+    )
+})
+
+const logoutUser= asyncHandler(async(req,res)=>{
+    //clear cookies ,refreshToken
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set:{
+                refreshToken: undefined
+            }
+        },
+        {
+            new: true
+        }
+    )
+    const options={
+        httpOnly: true,
+        secure:true
+        //above thing ensures that cookie is modifiable through server only 
+    }
+
+    return res.status(200).clearCookie("accessToken",options).clearCookie("refreshToken",options).json(new ApiResponse(200,{},"User logged Out"))
+    
+})
+
+export {
+    registerUser,
+    loginUser,
+logoutUser}
