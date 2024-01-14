@@ -13,13 +13,15 @@ const userSchema= new Schema({
     },
     email:{
         type: String,
-        required: true,
+        require: true,
         unique: true,
         lowercase:true,
-        trim: true,
+        trim: true
+        // sparse: true,
+        // index: true
         
     },
-    fullname:{
+    fullName:{
         type: String,
         required: true,
         trim: true,
