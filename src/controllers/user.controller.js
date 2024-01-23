@@ -150,8 +150,8 @@ const logoutUser= asyncHandler(async(req,res)=>{
     await User.findByIdAndUpdate(
         req.user._id,
         {
-            $set:{
-                refreshToken: undefined
+            $unset:{
+                refreshToken: 1 //removes the field from document
             }
         },
         {
@@ -212,13 +212,14 @@ const refreshAccessToken= asyncHandler(async(req,res)=>{
 const changeCurrentUserPassword = asyncHandler(async(req,res)=>{
     const{oldPassword, newPassword}=req.body
     const user= await User.findById(req.user?._id)
-
     const isPasswordCorrect=await user.isPasswordCorrect(oldPassword)
-
+    // console.log("----------------------");
+    // console.log(user);
     if(!isPasswordCorrect){
         throw new ApiError(400,"Invaid old password")
     }
-    user.password()=newPassword
+    user.password=newPassword
+    
     await user.save({validateBeforeSave: false})
 
     return res.status(200).json(new ApiResponse(200, {}, "Password Changed Successfully"))
@@ -235,7 +236,7 @@ const updateAccountDetails = asyncHandler(async(req,res)=>{
         throw new ApiError(400,"All fields are required")
     }
 
-    User.findByIdAndUpdate(req.user?._id,{
+   const user= await User.findByIdAndUpdate(req.user?._id,{
         $set:{
             fullName,
             email
