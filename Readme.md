@@ -1,7 +1,7 @@
 
 # PLAY(Youtube and Twitter Features Integrated)
 
-*A backend project built with nodejs, expressjs and mongodb in javascript. Having advanced features like aggregation pipelines, JWT Authentication, Bcrypt for password hashing *
+*A backend project built with nodejs, expressjs and mongodb in javascript. Having advanced features like aggregation pipelines, JWT Authentication, Bcrypt for password hashing. Images are stored on cloudinary that optimizes media files for faster loading times and improving overall performance *
 
 ## Table of Contents
 
