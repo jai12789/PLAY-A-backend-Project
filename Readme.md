@@ -75,7 +75,7 @@ To use the PLAY app, follow these steps:
 
 Run the application:
   ```bash
-    npm run dev
+  npm run dev
   ```    
 Open your web browser and navigate to http://localhost:8000
 
