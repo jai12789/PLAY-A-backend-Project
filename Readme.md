@@ -81,7 +81,7 @@ Open your web browser and navigate to http://localhost:8000
 
 ## API Documentation
 
-Explore the API using Postman(link will be added soon after testing).
+Explore the API using [Postman](https://documenter.getpostman.com/view/32112828/2s9YysBLmZ).
 
 ## Models Link
 
